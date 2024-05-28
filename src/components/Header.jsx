@@ -2,15 +2,17 @@ import {Link, NavLink, useNavigate} from "react-router-dom"
 import { useSelector } from 'react-redux'
 import '../styles/header.scss'
 import {useEffect, useState} from "react";
+import {useDebounce} from "../hooks/useDebounce";
 
 const Header = ({ searchMovies }) => {
     const { starredMovies } = useSelector((state) => state.starred);
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
+    const debouncedSearchMovies = useDebounce(searchMovies, 500);
     const handleSearch = (event) => {
         const value = event.target.value;
         setSearchTerm(value);
-        searchMovies(value);
+        debouncedSearchMovies(value);
     };
 
     const handleClearSearch = () => {

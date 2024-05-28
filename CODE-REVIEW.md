@@ -404,3 +404,41 @@ const InfiniteScrollComponent = () => {
 
 export default InfiniteScrollComponent;
 ```
+# `useDebounce` Hook
+
+The `useDebounce` hook is a custom React hook that helps to delay the execution of a function until after a specified wait time has passed since the last time it was invoked. This is particularly useful for scenarios like search input fields where you want to reduce the number of function calls made during rapid user input.
+
+## Usage
+
+### Parameters
+
+- `callback` (`function`): The function to be executed after the debounce delay.
+- `delay` (`number`): The amount of time in milliseconds to wait before executing the callback function.
+
+### Returns
+
+- A debounced version of the `callback` function.
+
+## Example
+
+Here's an example of how to use the `useDebounce` hook within a component:
+
+```javascript
+import { MutableRefObject, useCallback, useRef } from 'react';
+
+export function useDebounce(callback, delay) {
+    const timer = useRef();
+
+    return useCallback(
+        (...args) => {
+            if (timer.current) {
+                clearTimeout(timer.current);
+            }
+            timer.current = setTimeout(() => {
+                callback(...args);
+            }, delay);
+        },
+        [callback, delay],
+    );
+}
+```

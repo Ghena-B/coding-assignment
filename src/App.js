@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Routes, Route, useSearchParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import 'reactjs-popup/dist/index.css';
@@ -21,16 +21,16 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [videoKey, setVideoKey] = useState(null);
 
-  useEffect(() => {
-    const fetchMovieData = async (query = '', page = 1) => {
-      const apiUrl = query
-          ? `${ENDPOINT_SEARCH}&query=${query}&page=${page}`
-          : `${ENDPOINT_DISCOVER}&page=${page}`;
-      dispatch(fetchMovies({ apiUrl, page }));
-    };
+  const fetchMovieData = useCallback((query = '', page = 1) => {
+    const apiUrl = query
+        ? `${ENDPOINT_SEARCH}&query=${query}&page=${page}`
+        : `${ENDPOINT_DISCOVER}&page=${page}`;
+    dispatch(fetchMovies(apiUrl));
+  }, [dispatch]);
 
+  useEffect(() => {
     fetchMovieData(searchQuery);
-  }, [searchQuery, dispatch]);
+  }, [searchQuery, fetchMovieData]);
 
   const searchMovies = (query) => {
     navigate('/');

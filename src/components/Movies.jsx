@@ -5,9 +5,9 @@ import '../styles/movies.scss';
 import { ENDPOINT_DISCOVER } from "../utils/constants";
 
 const Movies = ({ viewTrailer, closeCard, movies }) => {
-    const [localMovies, setLocalMovies] = useState(movies || []);
+    const [localMovies, setLocalMovies] = useState([]);
     const [isError, setIsError] = useState(false);
-    const [hasMore, setHasMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
 
     const pageRef = useRef(1);
 
@@ -19,7 +19,7 @@ const Movies = ({ viewTrailer, closeCard, movies }) => {
 
             if (data.results) {
                 setLocalMovies((prev) => {
-                    const newData = [...prev, ...data.results];
+                    const newData = isFetchingFirstTime ? data.results : [...prev, ...data.results];
 
                     if (newData.length < data.total_results) {
                         setHasMore(true);
@@ -38,10 +38,11 @@ const Movies = ({ viewTrailer, closeCard, movies }) => {
         }
     };
 
-    // Initial fetch
+    // Initial fetch or reset when movies prop changes
     useEffect(() => {
+        pageRef.current = 1;
         setLocalMovies(movies);
-        if (pageRef.current === 1 && movies.length === 0) {
+        if (movies.length === 0) {
             fetchMovies({ page: pageRef.current, isFetchingFirstTime: true });
         }
     }, [movies]);
